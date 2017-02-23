@@ -31,6 +31,7 @@ class MOtomanPushEnv(Env):
         # self._state = self._state + action
         # x, y = self._state
         # reward = - (x ** 2 + y ** 2) ** 0.5
+        print ('\n init state and action: ', self._state, action)
         mass = 0.24351668  
         friction = 0.05537921
         obj_goal = [self._state[0]+1.0, self._state[1], self._state[2]]
@@ -68,22 +69,25 @@ class MOtomanPushEnv(Env):
         connection.close()
         sock.close()             
 
-        Y_new = np.zeros((1, 7))
+        Y_new = np.zeros((7, ))
         with open(final_pose_file, "r") as file:
             for line in file:
                 vals = line.split()
                 for i in range(0,7):
-                    Y_new[0,i] = vals[i]
+                    Y_new[i] = vals[i]
+        self._state = Y_new
+        next_observation = np.copy(self._state)
 
         done = True #abs(x) < 0.01 and abs(y) < 0.01
 
         # q_dist = np.abs(1 - np.sum(np.multiply(rotation, rotation_gt)**2))
-        dist = (( Y_new[0,0]-obj_goal[0])**2+( Y_new[0,1]-obj_goal[1])**2 + ( Y_new[0,2]-obj_goal[2])**2) ** 0.5
+        dist = (( Y_new[0]-obj_goal[0])**2+( Y_new[1]-obj_goal[1])**2 + ( Y_new[2]-obj_goal[2])**2) ** 0.5
 
-        next_observation = np.copy(Y_new)
-        reward = np.e**(- dist)
+        k = 2
+        reward = np.e**(- 2*dist)
 
-        print ('action: ', action, 'obj_goal: ', obj_goal, 'Y_new: ', Y_new[0,0:3], 'dist: ', dist, 'reward: ', reward)
+
+        print ('action: ', action, 'obj_goal: ', obj_goal, 'Y_new: ', Y_new[0:3], 'dist: ', dist, 'reward: ', reward)
 
         return Step(observation=next_observation, reward=reward, done=done)
 
