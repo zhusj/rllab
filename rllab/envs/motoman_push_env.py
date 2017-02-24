@@ -40,7 +40,7 @@ class MOtomanPushEnv(Env):
         with open(init_pose_file, "w+") as file:
             file.write("%f %f %f %f %f %f %f %f %f %f %f %f \n" % \
                        (mass, friction, self._state[0], self._state[1], self._state[3], self._state[4], \
-                        self._state[5], self._state[5], action, self._state[0], obj_goal[0], obj_goal[1]))
+                        self._state[5], self._state[6], action, self._state[0], obj_goal[0], obj_goal[1]))
      
         # Create a TCP/IP socket
         sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -84,7 +84,7 @@ class MOtomanPushEnv(Env):
         dist = (( Y_new[0]-obj_goal[0])**2+( Y_new[1]-obj_goal[1])**2 + ( Y_new[2]-obj_goal[2])**2) ** 0.5
 
         k = 2
-        reward = np.e**(- 2*dist)
+        reward = np.e**(- k*dist)
 
 
         print ('action: ', action, 'obj_goal: ', obj_goal, 'Y_new: ', Y_new[0:3], 'dist: ', dist, 'reward: ', reward)
