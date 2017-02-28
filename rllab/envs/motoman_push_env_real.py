@@ -57,6 +57,9 @@ def obj_final_pose_callback(data):
     obj_final_pose[6] = data.pose.orientation.w
     # print ("\n received obj_final_pose: ", obj_final_pose)
 
+rospy.Subscriber('/physics_simulator_obj_node', object_name_pose_message, obj_pose_callback)
+rospy.Subscriber('/baxter_detected_obj_pose', PoseStamped, obj_final_pose_callback)
+
 class MOtomanPushEnvReal(Env):
     @property
     def observation_space(self):
@@ -64,10 +67,9 @@ class MOtomanPushEnvReal(Env):
 
     @property
     def action_space(self):
-        return Box(low=0.1, high=1.0, shape=(1,))
+        return Box(low=0.15, high=1.0, shape=(1,))
 
-    def reset(self):
-        rospy.Subscriber('/physics_simulator_obj_node', object_name_pose_message, obj_pose_callback)
+    def reset(self):        
         rospy.wait_for_message("physics_simulator_obj_node", object_name_pose_message )
         # print ('object_pose: ', object_pose[0], object_pose[1],object_pose[2], object_pose[6], object_pose[3], \
         #             object_pose[4], object_pose[5])
@@ -77,7 +79,6 @@ class MOtomanPushEnvReal(Env):
         return observation
 
     def step(self, action):
-        rospy.Subscriber('/baxter_detected_obj_pose', PoseStamped, obj_final_pose_callback)
 
         obj_goal = [self._state[0], self._state[1]+1.0, self._state[2]]
 
