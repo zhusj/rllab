@@ -29,6 +29,8 @@ class NormalizedEnv(ProxyEnv, Serializable):
         self._reward_alpha = reward_alpha
         self._reward_mean = 0.
         self._reward_var = 1.
+        self._state = []
+        self._action = []
 
     def _update_obs_estimate(self, obs):
         flat_obs = self.wrapped_env.observation_space.flatten(obs)
@@ -50,6 +52,7 @@ class NormalizedEnv(ProxyEnv, Serializable):
 
     def reset(self):
         ret = self._wrapped_env.reset()
+        self._state.append(ret)
         if self._normalize_obs:
             return self._apply_normalize_obs(ret)
         else:
@@ -89,6 +92,8 @@ class NormalizedEnv(ProxyEnv, Serializable):
             next_obs = self._apply_normalize_obs(next_obs)
         if self._normalize_reward:
             reward = self._apply_normalize_reward(reward)
+        self._state.append(next_obs)
+        self._action.append(action)
         return Step(next_obs, reward * self._scale_reward, done, **info)
 
     def __str__(self):
