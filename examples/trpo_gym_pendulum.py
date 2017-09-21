@@ -10,7 +10,8 @@ def run_task(*_):
     # Please note that different environments with different action spaces may require different
     # policies. For example with a Box action space, a GaussianMLPPolicy works, but for a Discrete
     # action space may need to use a CategoricalMLPPolicy (see the trpo_gym_cartpole.py example)
-    env = normalize(GymEnv("Pendulum-v0"))
+    env = normalize(GymEnv("HalfCheetah-v1"))
+#         return ["HalfCheetah-v1","Hopper-v1","Walker2d-v1", "Swimmer-v1","InvertedPendulum-v1"]
 
     policy = GaussianMLPPolicy(
         env_spec=env.spec,
@@ -26,7 +27,7 @@ def run_task(*_):
         baseline=baseline,
         batch_size=4000,
         max_path_length=env.horizon,
-        n_itr=50,
+        n_itr=10,
         discount=0.99,
         step_size=0.01,
         # Uncomment both lines (this and the plot parameter below) to enable plotting
